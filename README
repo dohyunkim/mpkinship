@@ -1,0 +1,27 @@
+kinship diagram for anthroplogy using MetaPost
+
+file:     kinship.mp 
+version:  alpha state
+author:   Dohyun Kim
+license:  public domain
+
+usage example:
+
+	beginfig(0);
+	u := membersize;
+	male.ego(black); ego.c = origin; label.bot(btex ego etex, ego.s);
+	female.mom(black); mom.c = (1u,2u);
+	female.sister(black); sister.c = (2u,0);
+	female.niece(black); niece.c = (1u,-2u);
+	male.nephew(black); nephew.c = niece.c shifted (2u,0);
+	female.wife(white); wife.c = (-2u,0);
+	male.son(white); son.c = (-1u,-2u);
+	male.grndson(black); grndson.c = (0,-4u);
+	linktochildren(mom, ego, sister);
+	linktochildren(sister, niece, nephew);
+	linkmarriage(ego, wife);
+	linkmarriage(son, niece);
+	linkpairtochild(ego, wife, son);
+	linkpairtochild(son, niece, grndson);
+	drawmembers(ego,mom,sister,niece,nephew,wife,son,grndson);
+	endfig;
