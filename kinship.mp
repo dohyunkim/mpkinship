@@ -1,13 +1,13 @@
 % kinship diagram for anthropology
 
-numeric membersize; membersize := 1cm;
+numeric nodesize; nodesize := 1cm;
 
 vardef male@#(text col) =
   pair @#.c, @#.n, @#.s, @#.w, @#.e, @#.sw, @#.se, @#.nw, @#.ne, @#.cg;
-  @#.cg = @#.c + (0,-.167membersize); % center of gravity
-  @#.n  = dir90 *.667membersize + @#.cg;
-  @#.sw = dir210*.667membersize + @#.cg;
-  @#.se = dir330*.667membersize + @#.cg;
+  @#.cg = @#.c + (0,-.167nodesize); % center of gravity
+  @#.n  = dir90 *.667nodesize + @#.cg;
+  @#.sw = dir210*.667nodesize + @#.cg;
+  @#.se = dir330*.667nodesize + @#.cg;
   @#.nw = @#.n; @#.ne = @#.n;
   @#.s  = 1/2[@#.se,@#.sw];
   @#.w  = 1/2[@#.n, @#.sw];
@@ -19,35 +19,35 @@ enddef;
 
 vardef female@#(text col) =
   pair @#.c, @#.n, @#.s, @#.w, @#.e, @#.sw, @#.se, @#.nw, @#.ne, @#.cg;
-  @#.n  = dir90 *.5membersize + @#.c;
-  @#.w  = dir180*.5membersize + @#.c;
-  @#.s  = dir270*.5membersize + @#.c;
-  @#.e  = dir0  *.5membersize + @#.c;
-  @#.ne = dir45 *.5membersize + @#.c;
-  @#.nw = dir135*.5membersize + @#.c;
-  @#.se = dir315*.5membersize + @#.c;
-  @#.sw = dir225*.5membersize + @#.c;
+  @#.n  = dir90 *.5nodesize + @#.c;
+  @#.w  = dir180*.5nodesize + @#.c;
+  @#.s  = dir270*.5nodesize + @#.c;
+  @#.e  = dir0  *.5nodesize + @#.c;
+  @#.ne = dir45 *.5nodesize + @#.c;
+  @#.nw = dir135*.5nodesize + @#.c;
+  @#.se = dir315*.5nodesize + @#.c;
+  @#.sw = dir225*.5nodesize + @#.c;
   @#.cg = @#.c;
   string _fm_.@#; _fm_.@# :=
-    "fill fullcircle scaled "&decimal membersize &" shifted "&str @#
-    &".c withcolor "&str col &";draw fullcircle scaled "&decimal membersize
+    "fill fullcircle scaled "&decimal nodesize &" shifted "&str @#
+    &".c withcolor "&str col &";draw fullcircle scaled "&decimal nodesize
     &" shifted "&str @# &".c;";
 enddef;
 
 vardef unidentified@#(text col) =
   pair @#.c, @#.n, @#.s, @#.w, @#.e, @#.sw, @#.se, @#.nw, @#.ne, @#.cg;
-  @#.ne = @#.c + (.5membersize, .5membersize);
-  @#.sw = @#.c - (.5membersize, .5membersize);
-  @#.se = @#.c + (.5membersize,-.5membersize);
-  @#.nw = @#.c - (.5membersize,-.5membersize);
+  @#.ne = @#.c + (.5nodesize, .5nodesize);
+  @#.sw = @#.c - (.5nodesize, .5nodesize);
+  @#.se = @#.c + (.5nodesize,-.5nodesize);
+  @#.nw = @#.c - (.5nodesize,-.5nodesize);
   @#.n  = .5[@#.nw, @#.ne];
   @#.s  = .5[@#.sw, @#.se];
   @#.e  = .5[@#.ne, @#.se];
   @#.w  = .5[@#.nw, @#.sw];
   @#.cg = @#.c;
   string _fm_.@#; _fm_.@# :=
-    "fill unitsquare scaled "&decimal membersize &" shifted "&str @#
-    &".sw withcolor "&str col &";draw unitsquare scaled "&decimal membersize
+    "fill unitsquare scaled "&decimal nodesize &" shifted "&str @#
+    &".sw withcolor "&str col &";draw unitsquare scaled "&decimal nodesize
     &" shifted "&str @# &".sw;";
 enddef;
 
@@ -57,12 +57,11 @@ enddef;
 
 def linktochildren(suffix pp)(text tt) =
   begingroup
-    save count, ymid; numeric count, ymid; count := 0;
+    save ymid; numeric ymid;
+    ymid := ypart pp.c - nodesize;
+    draw pp.s -- (xpart pp.s, ymid);
     forsuffixes ch = tt:
-      if count = 0: ymid := ypart .5[pp.c, ch.c]; fi
-      draw if count = 0: pp.s-- fi
-        (xpart pp.s, ymid)--(xpart ch.n, ymid)--ch.n;
-      count := count + 1;
+      draw (xpart pp.s, ymid)--(xpart ch.n, ymid)--ch.n;
     endfor
   endgroup
 enddef;
@@ -70,11 +69,11 @@ let linktochild = linktochildren;
 
 def linkmarriage(suffix hh, ww) =
   if (xpart hh.c < xpart ww.c):
-    draw hh.e+(.1membersize, .05membersize) -- ww.w+(-.1membersize, .05membersize);
-    draw hh.e+(.1membersize,-.05membersize) -- ww.w+(-.1membersize,-.05membersize);
+    draw hh.e+(.1nodesize, .05nodesize) -- ww.w+(-.1nodesize, .05nodesize);
+    draw hh.e+(.1nodesize,-.05nodesize) -- ww.w+(-.1nodesize,-.05nodesize);
   else:
-    draw ww.e+(.1membersize, .05membersize) -- hh.w+(-.1membersize, .05membersize);
-    draw ww.e+(.1membersize,-.05membersize) -- hh.w+(-.1membersize,-.05membersize);
+    draw ww.e+(.1nodesize, .05nodesize) -- hh.w+(-.1nodesize, .05nodesize);
+    draw ww.e+(.1nodesize,-.05nodesize) -- hh.w+(-.1nodesize,-.05nodesize);
   fi
 enddef;
 
@@ -83,7 +82,7 @@ def linkpairtochildren(suffix hh, ww)(text tt) =
     save pp; pair pp.c, pp.s;
     pp.c = .5[hh.c,ww.c];
     pp.s = .5[hh.s,ww.s];
-    draw pp.c + down*.1membersize -- pp.s;
+    draw pp.c + down*.1nodesize -- pp.s;
     linktochildren(pp,tt);
   endgroup
 enddef;
@@ -92,8 +91,8 @@ let linkpairtochild = linkpairtochildren;
 def linksiblings(suffix aa)(text tt) =
   begingroup
     save pp; pair pp.c, pp.s;
-    pp.c = aa.c + up*2membersize;
-    pp.s = aa.c + up*membersize;
+    pp.c = aa.c + up*2nodesize;
+    pp.s = aa.c + up*nodesize;
     linktochildren(pp,aa,tt);
   endgroup
 enddef;
@@ -101,14 +100,14 @@ enddef;
 def markdeceased(text tt) =
   forsuffixes m = tt:
     draw (dir-45--dir135) scaled
-      if xpart (m.ne - m.nw) = xpart (m.e - m.w): .9membersize
-      else: .7membersize fi shifted m.cg
+      if xpart (m.ne - m.nw) = xpart (m.e - m.w): .9nodesize
+      else: .7nodesize fi shifted m.cg
       withpen pencircle scaled 2 withcolor .625white;
   endfor
 enddef;
 
 def markdivorced(suffix hh,ww) =
-  draw (dir45--dir-135) scaled .25membersize shifted .5[hh.c,ww.c]
+  draw (dir45--dir-135) scaled .25nodesize shifted .5[hh.c,ww.c]
     withpen pencircle scaled 2 withcolor .625white;
 enddef;
 
@@ -121,19 +120,19 @@ let linktoadoptedchild = linktoadoptedchildren;
 
 def linkcohabitation(suffix hh, ww) =
   if (xpart hh.c < xpart ww.c):
-    draw hh.e+(.1membersize, .05membersize){dir45} .. {dir45}ww.w+(-.1membersize, .05membersize);
-    draw hh.e+(.1membersize,-.05membersize){dir45} .. {dir45}ww.w+(-.1membersize,-.05membersize);
+    draw hh.e+(.1nodesize, .05nodesize){dir45} .. {dir45}ww.w+(-.1nodesize, .05nodesize);
+    draw hh.e+(.1nodesize,-.05nodesize){dir45} .. {dir45}ww.w+(-.1nodesize,-.05nodesize);
   else:
-    draw ww.e+(.1membersize, .05membersize){dir45} .. {dir45}hh.w+(-.1membersize, .05membersize);
-    draw ww.e+(.1membersize,-.05membersize){dir45} .. {dir45}hh.w+(-.1membersize,-.05membersize);
+    draw ww.e+(.1nodesize, .05nodesize){dir45} .. {dir45}hh.w+(-.1nodesize, .05nodesize);
+    draw ww.e+(.1nodesize,-.05nodesize){dir45} .. {dir45}hh.w+(-.1nodesize,-.05nodesize);
   fi
 enddef;
 
 def linktemporaryrelation(suffix hh, ww) =
   if (xpart hh.c < xpart ww.c):
-    draw hh.e+(.1membersize, 0){dir45} .. {dir45}ww.w+(-.1membersize, 0);
+    draw hh.e+(.1nodesize, 0){dir45} .. {dir45}ww.w+(-.1nodesize, 0);
   else:
-    draw ww.e+(.1membersize, 0){dir45} .. {dir45}hh.w+(-.1membersize, 0);
+    draw ww.e+(.1nodesize, 0){dir45} .. {dir45}hh.w+(-.1nodesize, 0);
   fi
 enddef;
 
@@ -149,38 +148,32 @@ def altmarkdeceased(text tt) =
     save p; path p;
     forsuffixes m = tt:
       p := (dir45--dir-135) scaled
-        if xpart (m.ne - m.nw) = xpart (m.e - m.w): .9membersize
-        else: .7membersize fi;
+        if xpart (m.ne - m.nw) = xpart (m.e - m.w): .9nodesize
+        else: .7nodesize fi;
       draw p shifted m.cg withpen pencircle scaled 2 withcolor .625white;
       draw p rotated 90 shifted m.cg withpen pencircle scaled 2 withcolor .625white;
     endfor
   endgroup
 enddef;
 
-def linkmarriageunder(suffix hh,ww) = % the order is important: many-one
+def linkmarriageunder(suffix hh, ww) = % the order is important: many-one
   begingroup
     save p, q; pair p, q;
     if (xpart hh.c < xpart ww.c):
-      p := hh.s + right*.2membersize;
+      p := hh.s + right*.2nodesize;
     else:
-      p := hh.s + left *.2membersize; 
+      p := hh.s + left *.2nodesize;
     fi
-    q := p + down*abs(ypart p - ypart ww.s) + down*.333membersize;
+    q := (xpart p, min(ypart hh.s, ypart ww.s) - .333nodesize);
     draw p -- q -- (xpart ww.s, ypart q) -- ww.s;
   endgroup
 enddef;
 
-def linkpairtochildrenunder(suffix hh,ww)(text tt) =
+def linkpairtochildrenunder(suffix hh, ww)(text tt) =
   begingroup
     save pp; pair pp.c, pp.s;
-    pp.c = (xpart .5[hh.c,ww.c], min(ypart hh.c, ypart ww.c));
-    pp.s = (xpart .5[hh.s,ww.s], min(ypart hh.s, ypart ww.s));
-    pp.c := pp.c + down*.333membersize;
-    if (xpart hh.c < xpart ww.c):
-      pp.s := pp.s + right*.1membersize + down*.333membersize;
-    else:
-      pp.s := pp.s + left *.1membersize + down*.333membersize; 
-    fi
+    pp.c = (xpart .5[hh.c, ww.c], min(ypart hh.c, ypart ww.c) - .167nodesize);
+    pp.s = (xpart .5[hh.s, ww.s], min(ypart hh.s, ypart ww.s) - .333nodesize);
     linktochildren(pp,tt);
   endgroup
 enddef;
@@ -197,32 +190,14 @@ def markdivorcedunder(suffix hh,ww) = % the order is important: many-one
   begingroup
     save p, q; pair p.c, q.c;
     if (xpart hh.c < xpart ww.c):
-      p.c := hh.s + right*.2membersize;
+      p.c := hh.s + right*.2nodesize;
     else:
-      p.c := hh.s + left *.2membersize; 
+      p.c := hh.s + left *.2nodesize; 
     fi
-    p.c := p.c + down*abs(ypart p.c - ypart ww.s) + down*.333membersize;
+    p.c := (xpart p.c,  min(ypart hh.s, ypart ww.s) - .333nodesize);
     q.c := (xpart ww.s, ypart p.c);
     markdivorced(p,q);
   endgroup
 enddef;
 
 endinput
-
-% usage:
-%  u := membersize;
-%  male.ego(black); ego.c = origin; label.bot(btex ego etex, ego.s);
-%  female.mom(black); mom.c = (1u,2u);
-%  female.sister(black); sister.c = (2u,0);
-%  female.niece(black); niece.c = (1u,-2u);
-%  male.nephew(black); nephew.c = niece.c shifted (2u,0);
-%  female.wife(white); wife.c = (-2u,0);
-%  male.son(white); son.c = (-1u,-2u);
-%  male.grndson(black); grndson.c = (0,-4u);
-%  linktochildren(mom, ego, sister);
-%  linktochildren(sister, niece, nephew);
-%  linkmarriage(ego, wife);
-%  linkmarriage(son, niece);
-%  linkpairtochild(ego, wife, son);
-%  linkpairtochild(son, niece, grndson);
-%  drawmembers(ego,mom,sister,niece,nephew,wife,son,grndson);

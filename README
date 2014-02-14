@@ -8,15 +8,15 @@ license:  public domain
 usage example:
 
 	beginfig(0);
-	u := membersize;
+	u:=2nodesize;
 	male.ego(black); ego.c = origin; label.bot(btex ego etex, ego.s);
-	female.mom(black); mom.c = (1u,2u);
-	female.sister(black); sister.c = (2u,0);
-	female.niece(black); niece.c = (1u,-2u);
-	male.nephew(black); nephew.c = niece.c shifted (2u,0);
-	female.wife(white); wife.c = (-2u,0);
-	male.son(white); son.c = (-1u,-2u);
-	male.grndson(black); grndson.c = (0,-4u);
+	female.sister(black); sister.c = ego.c+right*u;
+	female.mom(black); mom.c = .5[ego.c, sister.c]+up*u;
+	female.niece(black); niece.c = mom.c+down*2u;
+	male.nephew(black); nephew.c = niece.c shifted (u,0);
+	female.wife(white); wife.c = ego.c+left*u;
+	male.son(white); son.c = .5[ego.c,wife.c]+down*u;
+	male.grndson(black); grndson.c = ego.c+down*2u;
 	linktochildren(mom, ego, sister);
 	linktochildren(sister, niece, nephew);
 	linkmarriage(ego, wife);
