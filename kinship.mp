@@ -55,108 +55,119 @@ def drawmembers(text tt) =
   forsuffixes member = tt: scantokens _fm_.member; endfor
 enddef;
 
-def linktochildren(suffix pp)(text tt) =
+def linktochildren(suffix pp)(text tt) text remn =
   begingroup
     save ymid; numeric ymid;
     ymid := ypart pp.c - nodesize;
-    draw pp.s -- (xpart pp.s, ymid);
+    draw (pp.s -- (xpart pp.s, ymid)) remn;
     forsuffixes ch = tt:
-      draw (xpart pp.s, ymid)--(xpart ch.n, ymid)--ch.n;
+      draw ((xpart pp.s, ymid)--(xpart ch.n, ymid)--ch.n) remn;
     endfor
   endgroup
 enddef;
 let linktochild = linktochildren;
 
-def linkmarriage(suffix hh, ww) =
-  if (xpart hh.c < xpart ww.c):
-    draw hh.e+(.1nodesize, .05nodesize) -- ww.w+(-.1nodesize, .05nodesize);
-    draw hh.e+(.1nodesize,-.05nodesize) -- ww.w+(-.1nodesize,-.05nodesize);
-  else:
-    draw ww.e+(.1nodesize, .05nodesize) -- hh.w+(-.1nodesize, .05nodesize);
-    draw ww.e+(.1nodesize,-.05nodesize) -- hh.w+(-.1nodesize,-.05nodesize);
-  fi
+def linkmarriage(suffix hh, ww) text remn =
+  begingroup
+    save p, q; pair p, q;
+    if (xpart hh.c < xpart ww.c):
+      p = hh.e+right*.1nodesize; q = ww.w+left*.1nodesize;
+    else:
+      p = ww.e+right*.1nodesize; q = hh.w+left*.1nodesize;
+    fi
+    draw (p--q) shifted (0, .05nodesize) remn;
+    draw (p--q) shifted (0,-.05nodesize) remn;
+  endgroup
 enddef;
 
-def linkpairtochildren(suffix hh, ww)(text tt) =
+def linkpairtochildren(suffix hh, ww)(text tt) text remn =
   begingroup
     save pp; pair pp.c, pp.s;
     pp.c = .5[hh.c,ww.c];
     pp.s = .5[hh.s,ww.s];
-    draw pp.c + down*.1nodesize -- pp.s;
-    linktochildren(pp,tt);
+    draw (pp.c + down*.1nodesize -- pp.s) remn;
+    linktochildren(pp,tt) remn;
   endgroup
 enddef;
 let linkpairtochild = linkpairtochildren;
 
-def linksiblings(suffix aa)(text tt) =
+def linksiblings(suffix aa)(text tt) text remn =
   begingroup
     save pp; pair pp.c, pp.s;
     pp.c = aa.c + up*2nodesize;
     pp.s = aa.c + up*nodesize;
-    linktochildren(pp,aa,tt);
+    linktochildren(pp,aa,tt) remn;
   endgroup
 enddef;
 
-def markdeceased(text tt) =
+def markdeceased(text tt) text remn =
+  drawoptions(withpen pencircle scaled 2 withcolor .625white);
   forsuffixes m = tt:
     draw (dir-45--dir135) scaled
       if xpart (m.ne - m.nw) = xpart (m.e - m.w): .9nodesize
-      else: .7nodesize fi shifted m.cg
-      withpen pencircle scaled 2 withcolor .625white;
+      else: .7nodesize fi shifted m.cg remn;
   endfor
+  drawoptions();
 enddef;
 
 def markdivorced(suffix hh,ww) =
   draw (dir45--dir-135) scaled .25nodesize shifted .5[hh.c,ww.c]
-    withpen pencircle scaled 2 withcolor .625white;
+    withpen pencircle scaled 2 withcolor .625white
 enddef;
 
-def linktoadoptedchildren(text tt) =
+def linktoadoptedchildren(text tt) text remn =
   drawoptions(dashed evenly);
-  linktochildren(tt);
+  linktochildren(tt) remn;
   drawoptions();
 enddef;
 let linktoadoptedchild = linktoadoptedchildren;
 
-def linkcohabitation(suffix hh, ww) =
-  if (xpart hh.c < xpart ww.c):
-    draw hh.e+(.1nodesize, .05nodesize){dir45} .. {dir45}ww.w+(-.1nodesize, .05nodesize);
-    draw hh.e+(.1nodesize,-.05nodesize){dir45} .. {dir45}ww.w+(-.1nodesize,-.05nodesize);
-  else:
-    draw ww.e+(.1nodesize, .05nodesize){dir45} .. {dir45}hh.w+(-.1nodesize, .05nodesize);
-    draw ww.e+(.1nodesize,-.05nodesize){dir45} .. {dir45}hh.w+(-.1nodesize,-.05nodesize);
-  fi
+def linkcohabitation(suffix hh, ww) text remn =
+  begingroup
+    save p, q; pair p, q;
+    if (xpart hh.c < xpart ww.c):
+      p = hh.e+right*.1nodesize; q = ww.w+left*.1nodesize;
+    else:
+      p = ww.e+right*.1nodesize; q = hh.w+left*.1nodesize;
+    fi
+    draw (p{dir45}..{dir45}q) shifted (0, .05nodesize) remn;
+    draw (p{dir45}..{dir45}q) shifted (0,-.05nodesize) remn;
+  endgroup
 enddef;
 
 def linktemporaryrelation(suffix hh, ww) =
+  draw (
   if (xpart hh.c < xpart ww.c):
-    draw hh.e+(.1nodesize, 0){dir45} .. {dir45}ww.w+(-.1nodesize, 0);
+    hh.e+right*.1nodesize{dir45} .. {dir45}ww.w+left*.1nodesize
   else:
-    draw ww.e+(.1nodesize, 0){dir45} .. {dir45}hh.w+(-.1nodesize, 0);
+    ww.e+right*.1nodesize{dir45} .. {dir45}hh.w+left*.1nodesize
   fi
+  )
 enddef;
 
-def linkpairtoadoptedchildren(text tt) =
+def linkpairtoadoptedchildren(text tt) text remn =
   drawoptions(dashed evenly);
-  linkpairtochildren(tt);
+  linkpairtochildren(tt) remn;
   drawoptions();
 enddef;
 let linkpairtoadoptedchild = linkpairtoadoptedchildren;
 
-def altmarkdeceased(text tt) =
+def altmarkdeceased(text tt) text remn =
   begingroup
+    drawoptions(withpen pencircle scaled 2 withcolor .625white);
     save p; path p;
     forsuffixes m = tt:
       p := (dir45--dir-135) scaled
         if xpart (m.ne - m.nw) = xpart (m.e - m.w): .9nodesize
         else: .7nodesize fi;
-      draw p shifted m.cg withpen pencircle scaled 2 withcolor .625white;
-      draw p rotated 90 shifted m.cg withpen pencircle scaled 2 withcolor .625white;
+      draw p shifted m.cg remn;
+      draw p rotated 90 shifted m.cg remn;
     endfor
+    drawoptions();
   endgroup
 enddef;
 
-def linkmarriagebelow(suffix hh, ww) = % the order is important: many-one
+def linkmarriagebelow(suffix hh, ww) text remn = % order is important: many-one
   begingroup
     save p, q; pair p, q;
     if (xpart hh.c < xpart ww.c):
@@ -165,28 +176,28 @@ def linkmarriagebelow(suffix hh, ww) = % the order is important: many-one
       p := hh.s + left *.2nodesize;
     fi
     q := (xpart p, min(ypart hh.s, ypart ww.s) - .333nodesize);
-    draw p -- q -- (xpart ww.s, ypart q) -- ww.s;
+    draw (p -- q -- (xpart ww.s, ypart q) -- ww.s) remn;
   endgroup
 enddef;
 
-def linkpairtochildrenbelow(suffix hh, ww)(text tt) =
+def linkpairtochildrenbelow(suffix hh, ww)(text tt) text remn =
   begingroup
     save pp; pair pp.c, pp.s;
     pp.c = (xpart .5[hh.c, ww.c], min(ypart hh.c, ypart ww.c) - .167nodesize);
     pp.s = (xpart .5[hh.s, ww.s], min(ypart hh.s, ypart ww.s) - .333nodesize);
-    linktochildren(pp,tt);
+    linktochildren(pp,tt) remn;
   endgroup
 enddef;
 let linkpairtochildbelow = linkpairtochildrenbelow;
 
-def linkpairtoadoptedchildrenbelow(text tt) =
+def linkpairtoadoptedchildrenbelow(text tt) text remn =
   drawoptions(dashed evenly);
-  linkpairtochildrenbelow(tt);
+  linkpairtochildrenbelow(tt) remn;
   drawoptions();
 enddef;
 let linkpairtoadoptedchildbelow = linkpairtoadoptedchildrenbelow;
 
-def markdivorcedbelow(suffix hh,ww) = % the order is important: many-one
+def markdivorcedbelow(suffix hh,ww) text remn = % order is important: many-one
   begingroup
     save p, q; pair p.c, q.c;
     if (xpart hh.c < xpart ww.c):
@@ -196,20 +207,38 @@ def markdivorcedbelow(suffix hh,ww) = % the order is important: many-one
     fi
     p.c := (xpart p.c,  min(ypart hh.s, ypart ww.s) - .333nodesize);
     q.c := (xpart ww.s, ypart p.c);
-    markdivorced(p,q);
+    markdivorced(p,q) remn;
   endgroup
 enddef;
 
-def linkmarriageandchildren(suffix hh, ww)(text tt) =
-  linkmarriage(hh, ww);
-  linkpairtochildren(hh, ww, tt);
+def linkmarriageandchildren(suffix hh, ww)(text tt) text remn =
+  linkmarriage(hh, ww) remn;
+  linkpairtochildren(hh, ww, tt) remn;
 enddef;
 let linkmarriageandchild = linkmarriageandchildren;
 
-def linkmarriageandchildrenbelow(suffix hh, ww)(text tt) =
-  linkmarriagebelow(hh, ww);
-  linkpairtochildrenbelow(hh, ww, tt);
+def linkmarriageandchildrenbelow(suffix hh, ww)(text tt) text remn =
+  linkmarriagebelow(hh, ww) remn;
+  linkpairtochildrenbelow(hh, ww, tt) remn;
 enddef;
 let linkmarriageandchildbelow = linkmarriageandchildrenbelow;
+
+vardef labelmembers@#(text tt) text remn =
+  forsuffixes m = tt:
+    label@#(str m,
+      if     str @# = "bot" : m.s
+      elseif str @# = "rt"  : m.e
+      elseif str @# = "top" : m.n
+      elseif str @# = "lft" : m.w
+      elseif str @# = "lrt" : m.se
+      elseif str @# = "urt" : m.ne
+      elseif str @# = "ulft": m.nw
+      elseif str @# = "llft": m.sw
+      else: m.cg
+      fi
+    ) remn;
+  endfor
+enddef;
+def labelmember = labelmembers enddef;
 
 endinput
