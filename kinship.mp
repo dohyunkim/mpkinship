@@ -156,7 +156,7 @@ def altmarkdeceased(text tt) =
   endgroup
 enddef;
 
-def linkmarriageunder(suffix hh, ww) = % the order is important: many-one
+def linkmarriagebelow(suffix hh, ww) = % the order is important: many-one
   begingroup
     save p, q; pair p, q;
     if (xpart hh.c < xpart ww.c):
@@ -169,7 +169,7 @@ def linkmarriageunder(suffix hh, ww) = % the order is important: many-one
   endgroup
 enddef;
 
-def linkpairtochildrenunder(suffix hh, ww)(text tt) =
+def linkpairtochildrenbelow(suffix hh, ww)(text tt) =
   begingroup
     save pp; pair pp.c, pp.s;
     pp.c = (xpart .5[hh.c, ww.c], min(ypart hh.c, ypart ww.c) - .167nodesize);
@@ -177,16 +177,16 @@ def linkpairtochildrenunder(suffix hh, ww)(text tt) =
     linktochildren(pp,tt);
   endgroup
 enddef;
-let linkpairtochildunder = linkpairtochildrenunder;
+let linkpairtochildbelow = linkpairtochildrenbelow;
 
-def linkpairtoadoptedchildrenunder(text tt) =
+def linkpairtoadoptedchildrenbelow(text tt) =
   drawoptions(dashed evenly);
-  linkpairtochildrenunder(tt);
+  linkpairtochildrenbelow(tt);
   drawoptions();
 enddef;
-let linkpairtoadoptedchildunder = linkpairtoadoptedchildrenunder;
+let linkpairtoadoptedchildbelow = linkpairtoadoptedchildrenbelow;
 
-def markdivorcedunder(suffix hh,ww) = % the order is important: many-one
+def markdivorcedbelow(suffix hh,ww) = % the order is important: many-one
   begingroup
     save p, q; pair p.c, q.c;
     if (xpart hh.c < xpart ww.c):
@@ -199,5 +199,17 @@ def markdivorcedunder(suffix hh,ww) = % the order is important: many-one
     markdivorced(p,q);
   endgroup
 enddef;
+
+def linkmarriageandchildren(suffix hh, ww)(text tt) =
+  linkmarriage(hh, ww);
+  linkpairtochildren(hh, ww, tt);
+enddef;
+let linkmarriageandchild = linkmarriageandchildren;
+
+def linkmarriageandchildrenbelow(suffix hh, ww)(text tt) =
+  linkmarriagebelow(hh, ww);
+  linkpairtochildrenbelow(hh, ww, tt);
+enddef;
+let linkmarriageandchildbelow = linkmarriageandchildrenbelow;
 
 endinput
