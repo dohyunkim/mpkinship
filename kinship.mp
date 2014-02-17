@@ -55,49 +55,41 @@ def drawmembers(text tt) =
   forsuffixes member = tt: scantokens _fm_.member; endfor
 enddef;
 
-def linktochildren(suffix pp)(text tt) text remn =
-  begingroup
-    save ymid; numeric ymid;
-    ymid := ypart pp.c - nodesize;
-    draw (pp.s -- (xpart pp.s, ymid)) remn;
-    forsuffixes ch = tt:
-      draw ((xpart pp.s, ymid)--(xpart ch.n, ymid)--ch.n) remn;
-    endfor
-  endgroup
+vardef linktochildren(suffix pp)(text tt) text remn =
+  save ymid; numeric ymid;
+  ymid := ypart pp.c - nodesize;
+  draw (pp.s -- (xpart pp.s, ymid)) remn;
+  forsuffixes ch = tt:
+    draw ((xpart pp.s, ymid)--(xpart ch.n, ymid)--ch.n) remn;
+  endfor
 enddef;
-let linktochild = linktochildren;
+def linktochild = linktochildren enddef;
 
-def linkmarriage(suffix hh, ww) text remn =
-  begingroup
-    save p, q; pair p, q;
-    if (xpart hh.c < xpart ww.c):
-      p = hh.e+right*.1nodesize; q = ww.w+left*.1nodesize;
-    else:
-      p = ww.e+right*.1nodesize; q = hh.w+left*.1nodesize;
-    fi
-    draw (p--q) shifted (0, .05nodesize) remn;
-    draw (p--q) shifted (0,-.05nodesize) remn;
-  endgroup
+vardef linkmarriage(suffix hh, ww) text remn =
+  save p, q; pair p, q;
+  if (xpart hh.c < xpart ww.c):
+    p = hh.e+right*.1nodesize; q = ww.w+left*.1nodesize;
+  else:
+    p = ww.e+right*.1nodesize; q = hh.w+left*.1nodesize;
+  fi
+  draw (p--q) shifted (0, .05nodesize) remn;
+  draw (p--q) shifted (0,-.05nodesize) remn;
 enddef;
 
-def linkpairtochildren(suffix hh, ww)(text tt) text remn =
-  begingroup
-    save pp; pair pp.c, pp.s;
-    pp.c = .5[hh.c,ww.c];
-    pp.s = .5[hh.s,ww.s];
-    draw (pp.c + down*.1nodesize -- pp.s) remn;
-    linktochildren(pp,tt) remn;
-  endgroup
+vardef linkpairtochildren(suffix hh, ww)(text tt) text remn =
+  save pp; pair pp.c, pp.s;
+  pp.c = .5[hh.c,ww.c];
+  pp.s = .5[hh.s,ww.s];
+  draw (pp.c + down*.1nodesize -- pp.s) remn;
+  linktochildren(pp,tt) remn;
 enddef;
-let linkpairtochild = linkpairtochildren;
+def linkpairtochild = linkpairtochildren enddef;
 
-def linksiblings(suffix aa)(text tt) text remn =
-  begingroup
-    save pp; pair pp.c, pp.s;
-    pp.c = aa.c + up*2nodesize;
-    pp.s = aa.c + up*nodesize;
-    linktochildren(pp,aa,tt) remn;
-  endgroup
+vardef linksiblings(suffix aa)(text tt) text remn =
+  save pp; pair pp.c, pp.s;
+  pp.c = aa.c + up*2nodesize;
+  pp.s = aa.c + up*nodesize;
+  linktochildren(pp,aa,tt) remn;
 enddef;
 
 def kinshipmarkoptions(text t) =
@@ -122,22 +114,20 @@ def kinshipadoptedoptions(text t) =
 enddef;
 kinshipadoptedoptions(dashed evenly);
 
-def linktoadoptedchildren(text tt) text remn =
-  linktochildren(tt) _kin_a_op_ remn;
+def linktoadoptedchildren(text tt) =
+  linktochildren(tt) _kin_a_op_
 enddef;
 let linktoadoptedchild = linktoadoptedchildren;
 
-def linkcohabitation(suffix hh, ww) text remn =
-  begingroup
-    save p, q; pair p, q;
-    if (xpart hh.c < xpart ww.c):
-      p = hh.e+right*.1nodesize; q = ww.w+left*.1nodesize;
-    else:
-      p = ww.e+right*.1nodesize; q = hh.w+left*.1nodesize;
-    fi
-    draw (p{dir45}..{dir45}q) shifted (0, .05nodesize) remn;
-    draw (p{dir45}..{dir45}q) shifted (0,-.05nodesize) remn;
-  endgroup
+vardef linkcohabitation(suffix hh, ww) text remn =
+  save p, q; pair p, q;
+  if (xpart hh.c < xpart ww.c):
+    p = hh.e+right*.1nodesize; q = ww.w+left*.1nodesize;
+  else:
+    p = ww.e+right*.1nodesize; q = hh.w+left*.1nodesize;
+  fi
+  draw (p{dir45}..{dir45}q) shifted (0, .05nodesize) remn;
+  draw (p{dir45}..{dir45}q) shifted (0,-.05nodesize) remn;
 enddef;
 
 def linktemporaryrelation(suffix hh, ww) =
@@ -150,64 +140,56 @@ def linktemporaryrelation(suffix hh, ww) =
   )
 enddef;
 
-def linkpairtoadoptedchildren(text tt) text remn =
-  linkpairtochildren(tt) _kin_a_op_ remn;
+def linkpairtoadoptedchildren(text tt) =
+  linkpairtochildren(tt) _kin_a_op_
 enddef;
 let linkpairtoadoptedchild = linkpairtoadoptedchildren;
 
-def altmarkdeceased(text tt) text remn =
-  begingroup
-    save p; path p;
-    forsuffixes m = tt:
-      p := (dir45--dir-135) scaled
-        if xpart (m.ne - m.nw) = xpart (m.e - m.w): .9nodesize
-        else: .7nodesize fi;
-      draw p shifted m.cg _kin_m_op_ remn;
-      draw p rotated 90 shifted m.cg _kin_m_op_ remn;
-    endfor
-  endgroup
+vardef altmarkdeceased(text tt) text remn =
+  save p; path p;
+  forsuffixes m = tt:
+    p := (dir45--dir-135) scaled
+      if xpart (m.ne - m.nw) = xpart (m.e - m.w): .9nodesize
+      else: .7nodesize fi;
+    draw p shifted m.cg _kin_m_op_ remn;
+    draw p rotated 90 shifted m.cg _kin_m_op_ remn;
+  endfor
 enddef;
 
-def linkmarriagebelow(suffix hh, ww) text remn = % order is important: many-one
-  begingroup
-    save p, q; pair p, q;
-    if (xpart hh.c < xpart ww.c):
-      p := hh.s + right*.2nodesize;
-    else:
-      p := hh.s + left *.2nodesize;
-    fi
-    q := (xpart p, min(ypart hh.s, ypart ww.s) - .333nodesize);
-    draw (p -- q -- (xpart ww.s, ypart q) -- ww.s) remn;
-  endgroup
+vardef linkmarriagebelow(suffix hh, ww) text remn = % order: many-one
+  save p, q; pair p, q;
+  if (xpart hh.c < xpart ww.c):
+    p := hh.s + right*.2nodesize;
+  else:
+    p := hh.s + left *.2nodesize;
+  fi
+  q := (xpart p, min(ypart hh.s, ypart ww.s) - .333nodesize);
+  draw (p -- q -- (xpart ww.s, ypart q) -- ww.s) remn;
 enddef;
 
-def linkpairtochildrenbelow(suffix hh, ww)(text tt) text remn =
-  begingroup
-    save pp; pair pp.c, pp.s;
-    pp.c = (xpart .5[hh.c, ww.c], min(ypart hh.c, ypart ww.c) - .167nodesize);
-    pp.s = (xpart .5[hh.s, ww.s], min(ypart hh.s, ypart ww.s) - .333nodesize);
-    linktochildren(pp,tt) remn;
-  endgroup
+vardef linkpairtochildrenbelow(suffix hh, ww)(text tt) text remn =
+  save pp; pair pp.c, pp.s;
+  pp.c = (xpart .5[hh.c, ww.c], min(ypart hh.c, ypart ww.c) - .167nodesize);
+  pp.s = (xpart .5[hh.s, ww.s], min(ypart hh.s, ypart ww.s) - .333nodesize);
+  linktochildren(pp,tt) remn;
 enddef;
-let linkpairtochildbelow = linkpairtochildrenbelow;
+def linkpairtochildbelow = linkpairtochildrenbelow enddef;
 
-def linkpairtoadoptedchildrenbelow(text tt) text remn =
-  linkpairtochildrenbelow(tt) _kin_a_op_ remn;
+def linkpairtoadoptedchildrenbelow(text tt) =
+  linkpairtochildrenbelow(tt) _kin_a_op_
 enddef;
 let linkpairtoadoptedchildbelow = linkpairtoadoptedchildrenbelow;
 
-def markdivorcedbelow(suffix hh,ww) text remn = % order is important: many-one
-  begingroup
-    save p, q; pair p.c, q.c;
-    if (xpart hh.c < xpart ww.c):
-      p.c := hh.s + right*.2nodesize;
-    else:
-      p.c := hh.s + left *.2nodesize; 
-    fi
-    p.c := (xpart p.c,  min(ypart hh.s, ypart ww.s) - .333nodesize);
-    q.c := (xpart ww.s, ypart p.c);
-    markdivorced(p,q) remn;
-  endgroup
+vardef markdivorcedbelow(suffix hh,ww) text remn = % order: many-one
+  save p, q; pair p.c, q.c;
+  if (xpart hh.c < xpart ww.c):
+    p.c := hh.s + right*.2nodesize;
+  else:
+    p.c := hh.s + left *.2nodesize;
+  fi
+  p.c := (xpart p.c,  min(ypart hh.s, ypart ww.s) - .333nodesize);
+  q.c := (xpart ww.s, ypart p.c);
+  markdivorced(p,q) remn;
 enddef;
 
 def linkmarriageandchildren(suffix hh, ww)(text tt) text remn =
@@ -239,5 +221,47 @@ vardef labelmembers@#(text tt) text remn =
   endfor
 enddef;
 def labelmember = labelmembers enddef;
+
+def egoatorigin(text tt) =
+  forsuffixes m = tt:
+    if str m = "ego": m.c = origin; fi
+  endfor
+enddef;
+
+vardef lefttoright (suffix aa)(text tt) =
+  egoatorigin(aa,tt);
+  save p; pair p; p := aa.c;
+  forsuffixes m = tt:
+    p+right*2nodesize = m.c;
+    p := m.c;
+  endfor
+enddef;
+
+vardef toptobottom (suffix aa)(text tt) =
+  egoatorigin(aa,tt);
+  save p; pair p; p := aa.c;
+  forsuffixes m = tt:
+    p+down*2nodesize = m.c;
+    p := m.c;
+  endfor
+enddef;
+
+vardef toppairtobottom (suffix aa,bb)(text tt) =
+  egoatorigin(aa,bb,tt);
+  save p; pair p; p := .5[aa.c,bb.c];
+  forsuffixes m = tt:
+    p+down*2nodesize = m.c;
+    p := m.c;
+  endfor
+enddef;
+
+vardef bottompairtotop (suffix aa,bb)(text tt) =
+  egoatorigin(aa,bb,tt);
+  save p; pair p; p := .5[aa.c,bb.c];
+  forsuffixes m = tt:
+    p+up*2nodesize = m.c;
+    p := m.c;
+  endfor
+enddef;
 
 endinput

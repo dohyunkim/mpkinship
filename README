@@ -9,16 +9,19 @@ usage example:
 
 	beginfig(0);
 	u:=2nodesize;
-	female.mom(black); male.ego(black); female.sister(black);
+	%%% define members
+	male.ego(black); female.mom(black); female.sister(black);
 	female.wife(white); male.son(white); female.niece(black);
 	male.nephew(black); male.grandson(black);
-	wife.c+(u,0) = ego.c = sister.c-(u,0) = grandson.c+(0,2u);
-	son.c+(u,0) = niece.c = nephew.c-(u,0) = mom.c-(0,2u);
-	ego.c-(0,u) = .5[son.c,niece.c] = origin;
-	linktochildren(mom, ego, sister);
-	linktochildren(sister, niece, nephew);
-	linkmarriageandchild(ego, wife, son);
-	linkmarriageandchild(son, niece, grandson);
-	drawmembers(mom, ego, sister, niece, nephew, wife, son, grandson);
-	labelmembers.bot(ego, nephew, grandson);
+	%%% fix positions
+	lefttoright(wife,ego,sister); lefttoright(son,niece,nephew);
+	toppairtobottom(wife,ego,son); toppairtobottom(son,niece,grandson);
+	bottompairtotop(ego,sister,mom);
+	%%% draw and/or fill
+	linktochildren(mom,ego,sister); linktochildren(sister,niece,nephew);
+	linkmarriageandchild(ego,wife,son); linkmarriageandchild(son,niece,grandson);
+	drawmembers(mom,ego,sister,niece,nephew,wife,son,grandson);
+	labelmembers.bot(ego,nephew,grandson);
 	endfig;
+
+[N.B] one "ego" is (almost) always required.
