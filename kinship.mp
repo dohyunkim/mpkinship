@@ -100,25 +100,30 @@ def linksiblings(suffix aa)(text tt) text remn =
   endgroup
 enddef;
 
+def kinshipmarkoptions(text t) =
+  def _kin_m_op_ = t enddef
+enddef;
+kinshipmarkoptions(withpen pencircle scaled 2 withcolor .625white);
+
 def markdeceased(text tt) text remn =
-  drawoptions(withpen pencircle scaled 2 withcolor .625white);
   forsuffixes m = tt:
     draw (dir-45--dir135) scaled
       if xpart (m.ne - m.nw) = xpart (m.e - m.w): .9nodesize
-      else: .7nodesize fi shifted m.cg remn;
+      else: .7nodesize fi shifted m.cg _kin_m_op_ remn;
   endfor
-  drawoptions();
 enddef;
 
 def markdivorced(suffix hh,ww) =
-  draw (dir45--dir-135) scaled .25nodesize shifted .5[hh.c,ww.c]
-    withpen pencircle scaled 2 withcolor .625white
+  draw (dir45--dir-135) scaled .25nodesize shifted .5[hh.c,ww.c] _kin_m_op_
 enddef;
 
+def kinshipadoptedoptions(text t) =
+  def _kin_a_op_ = t enddef
+enddef;
+kinshipadoptedoptions(dashed evenly);
+
 def linktoadoptedchildren(text tt) text remn =
-  drawoptions(dashed evenly);
-  linktochildren(tt) remn;
-  drawoptions();
+  linktochildren(tt) _kin_a_op_ remn;
 enddef;
 let linktoadoptedchild = linktoadoptedchildren;
 
@@ -146,24 +151,20 @@ def linktemporaryrelation(suffix hh, ww) =
 enddef;
 
 def linkpairtoadoptedchildren(text tt) text remn =
-  drawoptions(dashed evenly);
-  linkpairtochildren(tt) remn;
-  drawoptions();
+  linkpairtochildren(tt) _kin_a_op_ remn;
 enddef;
 let linkpairtoadoptedchild = linkpairtoadoptedchildren;
 
 def altmarkdeceased(text tt) text remn =
   begingroup
-    drawoptions(withpen pencircle scaled 2 withcolor .625white);
     save p; path p;
     forsuffixes m = tt:
       p := (dir45--dir-135) scaled
         if xpart (m.ne - m.nw) = xpart (m.e - m.w): .9nodesize
         else: .7nodesize fi;
-      draw p shifted m.cg remn;
-      draw p rotated 90 shifted m.cg remn;
+      draw p shifted m.cg _kin_m_op_ remn;
+      draw p rotated 90 shifted m.cg _kin_m_op_ remn;
     endfor
-    drawoptions();
   endgroup
 enddef;
 
@@ -191,9 +192,7 @@ enddef;
 let linkpairtochildbelow = linkpairtochildrenbelow;
 
 def linkpairtoadoptedchildrenbelow(text tt) text remn =
-  drawoptions(dashed evenly);
-  linkpairtochildrenbelow(tt) remn;
-  drawoptions();
+  linkpairtochildrenbelow(tt) _kin_a_op_ remn;
 enddef;
 let linkpairtoadoptedchildbelow = linkpairtoadoptedchildrenbelow;
 
