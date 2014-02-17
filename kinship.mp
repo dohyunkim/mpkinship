@@ -51,11 +51,19 @@ vardef unidentified@#(text col) =
     &" shifted "&str @# &".sw;";
 enddef;
 
+def fixmemberpos(text tt) =
+  forsuffixes m = tt:
+    if unknown m.c: m.c = origin; fi
+  endfor
+enddef;
+
 def drawmembers(text tt) =
+  fixmemberpos(tt);
   forsuffixes member = tt: scantokens _fm_.member; endfor
 enddef;
 
 vardef linktochildren(suffix pp)(text tt) text remn =
+  fixmemberpos(pp,tt);
   save ymid; numeric ymid;
   ymid := ypart pp.c - nodesize;
   draw (pp.s -- (xpart pp.s, ymid)) remn;
@@ -66,6 +74,7 @@ enddef;
 def linktochild = linktochildren enddef;
 
 vardef linkmarriage(suffix hh, ww) text remn =
+  fixmemberpos(hh,ww);
   save p, q; pair p, q;
   if (xpart hh.c < xpart ww.c):
     p = hh.e+right*.1nodesize; q = ww.w+left*.1nodesize;
@@ -77,6 +86,7 @@ vardef linkmarriage(suffix hh, ww) text remn =
 enddef;
 
 vardef linkpairtochildren(suffix hh, ww)(text tt) text remn =
+  fixmemberpos(hh,ww,tt);
   save pp; pair pp.c, pp.s;
   pp.c = .5[hh.c,ww.c];
   pp.s = .5[hh.s,ww.s];
@@ -86,6 +96,7 @@ enddef;
 def linkpairtochild = linkpairtochildren enddef;
 
 vardef linksiblings(suffix aa)(text tt) text remn =
+  fixmemberpos(aa,tt);
   save pp; pair pp.c, pp.s;
   pp.c = aa.c + up*2nodesize;
   pp.s = aa.c + up*nodesize;
@@ -98,6 +109,7 @@ enddef;
 kinshipmarkoptions(withpen pencircle scaled 2 withcolor .625white);
 
 def markdeceased(text tt) text remn =
+  fixmemberpos(tt);
   forsuffixes m = tt:
     draw (dir-45--dir135) scaled
       if xpart (m.ne - m.nw) = xpart (m.e - m.w): .9nodesize
@@ -106,6 +118,7 @@ def markdeceased(text tt) text remn =
 enddef;
 
 def markdivorced(suffix hh,ww) =
+  fixmemberpos(hh,ww);
   draw (dir45--dir-135) scaled .25nodesize shifted .5[hh.c,ww.c] _kin_m_op_
 enddef;
 
@@ -120,6 +133,7 @@ enddef;
 let linktoadoptedchild = linktoadoptedchildren;
 
 vardef linkcohabitation(suffix hh, ww) text remn =
+  fixmemberpos(hh,ww);
   save p, q; pair p, q;
   if (xpart hh.c < xpart ww.c):
     p = hh.e+right*.1nodesize; q = ww.w+left*.1nodesize;
@@ -131,6 +145,7 @@ vardef linkcohabitation(suffix hh, ww) text remn =
 enddef;
 
 def linktemporaryrelation(suffix hh, ww) =
+  fixmemberpos(hh,ww);
   draw (
   if (xpart hh.c < xpart ww.c):
     hh.e+right*.1nodesize{dir45} .. {dir45}ww.w+left*.1nodesize
@@ -146,6 +161,7 @@ enddef;
 let linkpairtoadoptedchild = linkpairtoadoptedchildren;
 
 vardef altmarkdeceased(text tt) text remn =
+  fixmemberpos(tt);
   save p; path p;
   forsuffixes m = tt:
     p := (dir45--dir-135) scaled
@@ -157,6 +173,7 @@ vardef altmarkdeceased(text tt) text remn =
 enddef;
 
 vardef linkmarriagebelow(suffix hh, ww) text remn = % order: many-one
+  fixmemberpos(hh,ww);
   save p, q; pair p, q;
   if (xpart hh.c < xpart ww.c):
     p := hh.s + right*.2nodesize;
@@ -168,6 +185,7 @@ vardef linkmarriagebelow(suffix hh, ww) text remn = % order: many-one
 enddef;
 
 vardef linkpairtochildrenbelow(suffix hh, ww)(text tt) text remn =
+  fixmemberpos(hh,ww,tt);
   save pp; pair pp.c, pp.s;
   pp.c = (xpart .5[hh.c, ww.c], min(ypart hh.c, ypart ww.c) - .167nodesize);
   pp.s = (xpart .5[hh.s, ww.s], min(ypart hh.s, ypart ww.s) - .333nodesize);
@@ -181,6 +199,7 @@ enddef;
 let linkpairtoadoptedchildbelow = linkpairtoadoptedchildrenbelow;
 
 vardef markdivorcedbelow(suffix hh,ww) text remn = % order: many-one
+  fixmemberpos(hh,ww);
   save p, q; pair p.c, q.c;
   if (xpart hh.c < xpart ww.c):
     p.c := hh.s + right*.2nodesize;
@@ -205,6 +224,7 @@ enddef;
 let linkmarriageandchildbelow = linkmarriageandchildrenbelow;
 
 vardef labelmembers@#(text tt) text remn =
+  fixmemberpos(tt);
   forsuffixes m = tt:
     label@#(str m,
       if     str @# = "bot" : m.s
@@ -222,14 +242,7 @@ vardef labelmembers@#(text tt) text remn =
 enddef;
 def labelmember = labelmembers enddef;
 
-def egoatorigin(text tt) =
-  forsuffixes m = tt:
-    if str m = "ego": m.c = origin; fi
-  endfor
-enddef;
-
 vardef lefttoright (suffix aa)(text tt) =
-  egoatorigin(aa,tt);
   save p; pair p; p := aa.c;
   forsuffixes m = tt:
     p+right*2nodesize = m.c;
@@ -238,7 +251,6 @@ vardef lefttoright (suffix aa)(text tt) =
 enddef;
 
 vardef toptobottom (suffix aa)(text tt) =
-  egoatorigin(aa,tt);
   save p; pair p; p := aa.c;
   forsuffixes m = tt:
     p+down*2nodesize = m.c;
@@ -247,7 +259,6 @@ vardef toptobottom (suffix aa)(text tt) =
 enddef;
 
 vardef toppairtobottom (suffix aa,bb)(text tt) =
-  egoatorigin(aa,bb,tt);
   save p; pair p; p := .5[aa.c,bb.c];
   forsuffixes m = tt:
     p+down*2nodesize = m.c;
@@ -256,7 +267,6 @@ vardef toppairtobottom (suffix aa,bb)(text tt) =
 enddef;
 
 vardef bottompairtotop (suffix aa,bb)(text tt) =
-  egoatorigin(aa,bb,tt);
   save p; pair p; p := .5[aa.c,bb.c];
   forsuffixes m = tt:
     p+up*2nodesize = m.c;
