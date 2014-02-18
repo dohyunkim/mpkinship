@@ -10,9 +10,9 @@ usage example:
     beginfig(0);
     u:=2nodesize;
     %%% define members
-    male.ego(black); female.mom(black); female.sister(black);
-    female.wife(white); male.son(white); female.niece(black);
-    male.nephew(black); male.grandson(black);
+    forsuffixes $ = ego,nephew,grandson: male.$(black); endfor
+    forsuffixes $ = mom,sister,niece: female.$(black); endfor
+    female.wife(white); male.son(white);
     %%% fix positions
     lefttoright(wife,ego,sister); lefttoright(son,niece,nephew);
     toppairtobottom(wife,ego,son); toppairtobottom(son,niece,grandson);
