@@ -8,7 +8,6 @@ license:  public domain
 usage example:
 
     beginfig(0);
-    u:=2nodesize;
     %%% define members
     forsuffixes $ = ego,nephew,grandson: male.$(black); endfor
     forsuffixes $ = mom,sister,niece: female.$(black); endfor
