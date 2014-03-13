@@ -1,8 +1,11 @@
 % kinship diagram for anthropology
+%  written by Dohyun Kim <nomos at ktug org>
+%  version: alpha state
+%  license: public domain
 
 numeric nodesize; nodesize := 1cm;
 
-vardef male@#(text col) =
+vardef male@#(text col_) =
   pair @#c, @#n, @#s, @#w, @#e, @#sw, @#se, @#nw, @#ne, @#cg;
   @#cg = @#c + down*.167nodesize; % center of gravity
   @#n  = up*.667nodesize + @#cg;
@@ -14,10 +17,10 @@ vardef male@#(text col) =
   @#e  = 1/2[@#n, @#se];
   string _fm_@#; _fm_@# :=
     "fill "&str @# &".n--"&str @# &".sw--"&str @# &".se--cycle withcolor "
-    &str col &";draw "&str @# &".n--"&str @# &".sw--"&str @# &".se--cycle;";
+    &str col_ &";draw "&str @# &".n--"&str @# &".sw--"&str @# &".se--cycle;";
 enddef;
 
-vardef female@#(text col) =
+vardef female@#(text col_) =
   pair @#c, @#n, @#s, @#w, @#e, @#sw, @#se, @#nw, @#ne, @#cg;
   @#n  = up*.5nodesize + @#c;
   @#w  = left*.5nodesize + @#c;
@@ -30,11 +33,11 @@ vardef female@#(text col) =
   @#cg = @#c;
   string _fm_@#; _fm_@# :=
     "fill fullcircle scaled "&decimal nodesize &" shifted "&str @#
-    &".c withcolor "&str col &";draw fullcircle scaled "&decimal nodesize
+    &".c withcolor "&str col_ &";draw fullcircle scaled "&decimal nodesize
     &" shifted "&str @# &".c;";
 enddef;
 
-vardef unidentified@#(text col) =
+vardef unidentified@#(text col_) =
   pair @#c, @#n, @#s, @#w, @#e, @#sw, @#se, @#nw, @#ne, @#cg;
   @#ne = @#c + (.5nodesize, .5nodesize);
   @#sw = @#c - (.5nodesize, .5nodesize);
@@ -47,7 +50,7 @@ vardef unidentified@#(text col) =
   @#cg = @#c;
   string _fm_@#; _fm_@# :=
     "fill unitsquare scaled "&decimal nodesize &" shifted "&str @#
-    &".sw withcolor "&str col &";draw unitsquare scaled "&decimal nodesize
+    &".sw withcolor "&str col_ &";draw unitsquare scaled "&decimal nodesize
     &" shifted "&str @# &".sw;";
 enddef;
 
@@ -62,49 +65,49 @@ def drawmembers(text $$) =
   forsuffixes $ = $$: scantokens _fm_$; endfor
 enddef;
 
-vardef linktochildren(suffix pp)(text $$) text _rem_ =
-  fixmemberpos(pp,$$);
-  save ymid; numeric ymid;
-  ymid := ypart pp.c - nodesize;
-  draw (pp.s -- (xpart pp.s, ymid)) _rem_;
+vardef linktochildren(suffix pp_)(text $$) text _rem_ =
+  fixmemberpos(pp_,$$);
+  save ymid_; numeric ymid_;
+  ymid_ := ypart pp_.c - nodesize;
+  draw (pp_.s -- (xpart pp_.s, ymid_)) _rem_;
   forsuffixes $ = $$:
-    draw ((xpart pp.s, ymid)--(xpart $n, ymid)--$n) _rem_;
+    draw ((xpart pp_.s, ymid_)--(xpart $n, ymid_)--$n) _rem_;
   endfor
 enddef;
 def linktochild = linktochildren enddef;
 
-vardef linkmarriage(suffix hh, ww) text _rem_ =
-  fixmemberpos(hh,ww);
-  save p, q; pair p, q;
-  if (xpart hh.c < xpart ww.c):
-    p = hh.e+right*.1nodesize; q = ww.w+left*.1nodesize;
+vardef linkmarriage(suffix hh_, ww_) text _rem_ =
+  fixmemberpos(hh_,ww_);
+  save pp_, qq_; pair pp_, qq_;
+  if (xpart hh_.c < xpart ww_.c):
+    pp_ = hh_.e+right*.1nodesize; qq_ = ww_.w+left*.1nodesize;
   else:
-    p = ww.e+right*.1nodesize; q = hh.w+left*.1nodesize;
+    pp_ = ww_.e+right*.1nodesize; qq_ = hh_.w+left*.1nodesize;
   fi
-  draw (p--q) shifted (0, .05nodesize) _rem_;
-  draw (p--q) shifted (0,-.05nodesize) _rem_;
+  draw (pp_--qq_) shifted (0, .05nodesize) _rem_;
+  draw (pp_--qq_) shifted (0,-.05nodesize) _rem_;
 enddef;
 
-vardef linkpairtochildren(suffix hh, ww)(text $$) text _rem_ =
-  fixmemberpos(hh,ww,$$);
-  save pp; pair pp.c, pp.s;
-  pp.c = .5[hh.c,ww.c];
-  pp.s = .5[hh.s,ww.s];
-  draw (pp.c + down*.1nodesize -- pp.s) _rem_;
-  linktochildren(pp,$$) _rem_;
+vardef linkpairtochildren(suffix hh_, ww_)(text $$) text _rem_ =
+  fixmemberpos(hh_,ww_,$$);
+  save pp_; pair pp_.c, pp_.s;
+  pp_.c = .5[hh_.c,ww_.c];
+  pp_.s = .5[hh_.s,ww_.s];
+  draw (pp_.c + down*.1nodesize -- pp_.s) _rem_;
+  linktochildren(pp_,$$) _rem_;
 enddef;
 def linkpairtochild = linkpairtochildren enddef;
 
-vardef linksiblings(suffix aa)(text $$) text _rem_ =
-  fixmemberpos(aa,$$);
-  save pp; pair pp.c, pp.s;
-  pp.c = aa.c + up*2nodesize;
-  pp.s = aa.c + up*nodesize;
-  linktochildren(pp,aa,$$) _rem_;
+vardef linksiblings(suffix aa_)(text $$) text _rem_ =
+  fixmemberpos(aa_,$$);
+  save pp_; pair pp_.c, pp_.s;
+  pp_.c = aa_.c + up*2nodesize;
+  pp_.s = aa_.c + up*nodesize;
+  linktochildren(pp_,aa_,$$) _rem_;
 enddef;
 
-def kinshipmarkoptions(text t) =
-  def _kin_m_op_ = t enddef
+def kinshipmarkoptions(text tt_) =
+  def _kin_m_op_ = tt_ enddef
 enddef;
 kinshipmarkoptions(withpen pencircle scaled 2 withcolor .625white);
 
@@ -117,13 +120,13 @@ def markdeceased(text $$) text _rem_ =
   endfor
 enddef;
 
-def markdivorced(suffix hh,ww) =
-  fixmemberpos(hh,ww);
-  draw (dir45--dir-135) scaled .25nodesize shifted .5[hh.c,ww.c] _kin_m_op_
+def markdivorced(suffix hh_,ww_) =
+  fixmemberpos(hh_,ww_);
+  draw (dir45--dir-135) scaled .25nodesize shifted .5[hh_.c,ww_.c] _kin_m_op_
 enddef;
 
-def kinshipadoptedoptions(text t) =
-  def _kin_a_op_ = t enddef
+def kinshipadoptedoptions(text tt_) =
+  def _kin_a_op_ = tt_ enddef
 enddef;
 kinshipadoptedoptions(dashed evenly);
 
@@ -132,25 +135,25 @@ def linktoadoptedchildren(text $$) =
 enddef;
 let linktoadoptedchild = linktoadoptedchildren;
 
-vardef linkcohabitation(suffix hh, ww) text _rem_ =
-  fixmemberpos(hh,ww);
-  save p, q; pair p, q;
-  if (xpart hh.c < xpart ww.c):
-    p = hh.e+right*.1nodesize; q = ww.w+left*.1nodesize;
+vardef linkcohabitation(suffix hh_, ww_) text _rem_ =
+  fixmemberpos(hh_,ww_);
+  save pp_, qq_; pair pp_, qq_;
+  if (xpart hh_.c < xpart ww_.c):
+    pp_ = hh_.e+right*.1nodesize; qq_ = ww_.w+left*.1nodesize;
   else:
-    p = ww.e+right*.1nodesize; q = hh.w+left*.1nodesize;
+    pp_ = ww_.e+right*.1nodesize; qq_ = hh_.w+left*.1nodesize;
   fi
-  draw (p{dir45}..{dir45}q) shifted (0, .05nodesize) _rem_;
-  draw (p{dir45}..{dir45}q) shifted (0,-.05nodesize) _rem_;
+  draw (pp_{dir45}..{dir45}qq_) shifted (0, .05nodesize) _rem_;
+  draw (pp_{dir45}..{dir45}qq_) shifted (0,-.05nodesize) _rem_;
 enddef;
 
-def linktemporaryrelation(suffix hh, ww) =
-  fixmemberpos(hh,ww);
+def linktemporaryrelation(suffix hh_, ww_) =
+  fixmemberpos(hh_,ww_);
   draw (
-  if (xpart hh.c < xpart ww.c):
-    hh.e+right*.1nodesize{dir45} .. {dir45}ww.w+left*.1nodesize
+  if (xpart hh_.c < xpart ww_.c):
+    hh_.e+right*.1nodesize{dir45} .. {dir45}ww_.w+left*.1nodesize
   else:
-    ww.e+right*.1nodesize{dir45} .. {dir45}hh.w+left*.1nodesize
+    ww_.e+right*.1nodesize{dir45} .. {dir45}hh_.w+left*.1nodesize
   fi
   )
 enddef;
@@ -162,34 +165,34 @@ let linkpairtoadoptedchild = linkpairtoadoptedchildren;
 
 vardef altmarkdeceased(text $$) text _rem_ =
   fixmemberpos($$);
-  save p; path p;
+  save pp_; path pp_;
   forsuffixes $ = $$:
-    p := (dir45--dir-135) scaled
+    pp_ := (dir45--dir-135) scaled
       if xpart ($ne - $nw) = xpart ($e - $w): .9nodesize
       else: .7nodesize fi;
-    draw p shifted $cg _kin_m_op_ _rem_;
-    draw p rotated 90 shifted $cg _kin_m_op_ _rem_;
+    draw pp_ shifted $cg _kin_m_op_ _rem_;
+    draw pp_ rotated 90 shifted $cg _kin_m_op_ _rem_;
   endfor
 enddef;
 
-vardef linkmarriagebelow(suffix hh, ww) text _rem_ = % order: many-one
-  fixmemberpos(hh,ww);
-  save p, q; pair p, q;
-  if (xpart hh.c < xpart ww.c):
-    p := hh.s + right*.2nodesize;
+vardef linkmarriagebelow(suffix hh_, ww_) text _rem_ = % order: many-one
+  fixmemberpos(hh_,ww_);
+  save pp_, qq_; pair pp_, qq_;
+  if (xpart hh_.c < xpart ww_.c):
+    pp_ := hh_.s + right*.2nodesize;
   else:
-    p := hh.s + left *.2nodesize;
+    pp_ := hh_.s + left *.2nodesize;
   fi
-  q := (xpart p, min(ypart hh.s, ypart ww.s) - .333nodesize);
-  draw (p -- q -- (xpart ww.s, ypart q) -- ww.s) _rem_;
+  qq_ := (xpart pp_, min(ypart hh_.s, ypart ww_.s) - .333nodesize);
+  draw (pp_ -- qq_ -- (xpart ww_.s, ypart qq_) -- ww_.s) _rem_;
 enddef;
 
-vardef linkpairtochildrenbelow(suffix hh, ww)(text $$) text _rem_ =
-  fixmemberpos(hh,ww,$$);
-  save pp; pair pp.c, pp.s;
-  pp.c = (xpart .5[hh.c, ww.c], min(ypart hh.c, ypart ww.c) - .167nodesize);
-  pp.s = (xpart .5[hh.s, ww.s], min(ypart hh.s, ypart ww.s) - .333nodesize);
-  linktochildren(pp,$$) _rem_;
+vardef linkpairtochildrenbelow(suffix hh_, ww_)(text $$) text _rem_ =
+  fixmemberpos(hh_,ww_,$$);
+  save pp_; pair pp_.c, pp_.s;
+  pp_.c = (xpart .5[hh_.c, ww_.c], min(ypart hh_.c, ypart ww_.c) - .167nodesize);
+  pp_.s = (xpart .5[hh_.s, ww_.s], min(ypart hh_.s, ypart ww_.s) - .333nodesize);
+  linktochildren(pp_,$$) _rem_;
 enddef;
 def linkpairtochildbelow = linkpairtochildrenbelow enddef;
 
@@ -198,28 +201,28 @@ def linkpairtoadoptedchildrenbelow(text $$) =
 enddef;
 let linkpairtoadoptedchildbelow = linkpairtoadoptedchildrenbelow;
 
-vardef markdivorcedbelow(suffix hh,ww) text _rem_ = % order: many-one
-  fixmemberpos(hh,ww);
-  save p, q; pair p.c, q.c;
-  if (xpart hh.c < xpart ww.c):
-    p.c := hh.s + right*.2nodesize;
+vardef markdivorcedbelow(suffix hh_,ww_) text _rem_ = % order: many-one
+  fixmemberpos(hh_,ww_);
+  save pp_, qq_; pair pp_.c, qq_.c;
+  if (xpart hh_.c < xpart ww_.c):
+    pp_.c := hh_.s + right*.2nodesize;
   else:
-    p.c := hh.s + left *.2nodesize;
+    pp_.c := hh_.s + left *.2nodesize;
   fi
-  p.c := (xpart p.c,  min(ypart hh.s, ypart ww.s) - .333nodesize);
-  q.c := (xpart ww.s, ypart p.c);
-  markdivorced(p,q) _rem_;
+  pp_.c := (xpart pp_.c,  min(ypart hh_.s, ypart ww_.s) - .333nodesize);
+  qq_.c := (xpart ww_.s, ypart pp_.c);
+  markdivorced(pp_,qq_) _rem_;
 enddef;
 
-def linkmarriageandchildren(suffix hh, ww)(text $$) text _rem_ =
-  linkmarriage(hh, ww) _rem_;
-  linkpairtochildren(hh, ww, $$) _rem_;
+def linkmarriageandchildren(suffix hh_, ww_)(text $$) text _rem_ =
+  linkmarriage(hh_, ww_) _rem_;
+  linkpairtochildren(hh_, ww_, $$) _rem_;
 enddef;
 let linkmarriageandchild = linkmarriageandchildren;
 
-def linkmarriageandchildrenbelow(suffix hh, ww)(text $$) text _rem_ =
-  linkmarriagebelow(hh, ww) _rem_;
-  linkpairtochildrenbelow(hh, ww, $$) _rem_;
+def linkmarriageandchildrenbelow(suffix hh_, ww_)(text $$) text _rem_ =
+  linkmarriagebelow(hh_, ww_) _rem_;
+  linkpairtochildrenbelow(hh_, ww_, $$) _rem_;
 enddef;
 let linkmarriageandchildbelow = linkmarriageandchildrenbelow;
 
@@ -242,35 +245,35 @@ vardef labelmembers@#(text $$) text _rem_ =
 enddef;
 def labelmember = labelmembers enddef;
 
-vardef lefttoright (suffix aa)(text $$) =
-  save p; pair p; p := aa.c;
+vardef lefttoright (suffix aa_)(text $$) =
+  save pp_; pair pp_; pp_ := aa_.c;
   forsuffixes $ = $$:
-    p+right*2nodesize = $c;
-    p := $c;
+    pp_+right*2nodesize = $c;
+    pp_ := $c;
   endfor
 enddef;
 
-vardef toptobottom (suffix aa)(text $$) =
-  save p; pair p; p := aa.c;
+vardef toptobottom (suffix aa_)(text $$) =
+  save pp_; pair pp_; pp_ := aa_.c;
   forsuffixes $ = $$:
-    p+down*2nodesize = $c;
-    p := $c;
+    pp_+down*2nodesize = $c;
+    pp_ := $c;
   endfor
 enddef;
 
-vardef toppairtobottom (suffix aa,bb)(text $$) =
-  save p; pair p; p := .5[aa.c,bb.c];
+vardef toppairtobottom (suffix aa_,bb_)(text $$) =
+  save pp_; pair pp_; pp_ := .5[aa_.c,bb_.c];
   forsuffixes $ = $$:
-    p+down*2nodesize = $c;
-    p := $c;
+    pp_+down*2nodesize = $c;
+    pp_ := $c;
   endfor
 enddef;
 
-vardef bottompairtotop (suffix aa,bb)(text $$) =
-  save p; pair p; p := .5[aa.c,bb.c];
+vardef bottompairtotop (suffix aa_,bb_)(text $$) =
+  save pp_; pair pp_; pp_ := .5[aa_.c,bb_.c];
   forsuffixes $ = $$:
-    p+up*2nodesize = $c;
-    p := $c;
+    pp_+up*2nodesize = $c;
+    pp_ := $c;
   endfor
 enddef;
 
