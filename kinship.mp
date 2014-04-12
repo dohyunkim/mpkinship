@@ -5,27 +5,31 @@
 
 numeric nodesize; nodesize := 1cm;
 
+path unittriangle;
+unittriangle = (dir90 -- dir210 -- dir330 -- cycle) scaled 2/3;
+
 vardef male@#(text col_) =
   pair @#c, @#n, @#s, @#w, @#e, @#sw, @#se, @#nw, @#ne, @#cg;
-  @#cg = @#c + down*.167nodesize; % center of gravity
-  @#n  = up*.667nodesize + @#cg;
-  @#sw = dir210*.667nodesize + @#cg;
-  @#se = dir330*.667nodesize + @#cg;
+  @#cg = (0,-1/6nodesize) shifted @#c; % center of gravity
+  @#n  = (0, 2/3nodesize) shifted @#cg;
+  @#sw = (0, 2/3nodesize) rotated  120 shifted @#cg;
+  @#se = (0, 2/3nodesize) rotated -120 shifted @#cg;
   @#nw = @#n; @#ne = @#n;
   @#s  = 1/2[@#se,@#sw];
   @#w  = 1/2[@#n, @#sw];
   @#e  = 1/2[@#n, @#se];
   string _fm_@#; _fm_@# :=
-    "fill "&str @# &".n--"&str @# &".sw--"&str @# &".se--cycle withcolor "
-    &str col_ &";draw "&str @# &".n--"&str @# &".sw--"&str @# &".se--cycle;";
+    "fill unittriangle scaled "&decimal nodesize &" shifted "&str @#
+    &".cg withcolor "&str col_ &";draw unittriangle scaled "&decimal nodesize
+    &" shifted "&str @# &".cg;";
 enddef;
 
 vardef female@#(text col_) =
   pair @#c, @#n, @#s, @#w, @#e, @#sw, @#se, @#nw, @#ne, @#cg;
-  @#n  = up*.5nodesize + @#c;
-  @#w  = left*.5nodesize + @#c;
-  @#s  = down*.5nodesize + @#c;
-  @#e  = right*.5nodesize + @#c;
+  @#n  = @#c + (0, 1/2nodesize);
+  @#w  = @#c - (1/2nodesize, 0);
+  @#s  = @#c - (0, 1/2nodesize);
+  @#e  = @#c + (1/2nodesize, 0);
   @#ne = dir45 *.5nodesize + @#c;
   @#nw = dir135*.5nodesize + @#c;
   @#se = dir315*.5nodesize + @#c;
@@ -183,15 +187,15 @@ vardef linkmarriagebelow(suffix hh_, ww_) text _rem_ = % order: many-one
   else:
     pp_ := hh_.s + left *.2nodesize;
   fi
-  qq_ := (xpart pp_, min(ypart hh_.s, ypart ww_.s) - .333nodesize);
+  qq_ := (xpart pp_, min(ypart hh_.s, ypart ww_.s) - 1/3nodesize);
   draw (pp_ -- qq_ -- (xpart ww_.s, ypart qq_) -- ww_.s) _rem_;
 enddef;
 
 vardef linkpairtochildrenbelow(suffix hh_, ww_)(text $$) text _rem_ =
   fixmemberpos(hh_,ww_,$$);
   save pp_; pair pp_.c, pp_.s;
-  pp_.c = (xpart .5[hh_.c, ww_.c], min(ypart hh_.c, ypart ww_.c) - .167nodesize);
-  pp_.s = (xpart .5[hh_.s, ww_.s], min(ypart hh_.s, ypart ww_.s) - .333nodesize);
+  pp_.c = (xpart .5[hh_.c, ww_.c], min(ypart hh_.c, ypart ww_.c) - 1/6nodesize);
+  pp_.s = (xpart .5[hh_.s, ww_.s], min(ypart hh_.s, ypart ww_.s) - 1/3nodesize);
   linktochildren(pp_,$$) _rem_;
 enddef;
 def linkpairtochildbelow = linkpairtochildrenbelow enddef;
@@ -209,7 +213,7 @@ vardef markdivorcedbelow(suffix hh_,ww_) text _rem_ = % order: many-one
   else:
     pp_.c := hh_.s + left *.2nodesize;
   fi
-  pp_.c := (xpart pp_.c,  min(ypart hh_.s, ypart ww_.s) - .333nodesize);
+  pp_.c := (xpart pp_.c,  min(ypart hh_.s, ypart ww_.s) - 1/3nodesize);
   qq_.c := (xpart ww_.s, ypart pp_.c);
   markdivorced(pp_,qq_) _rem_;
 enddef;
