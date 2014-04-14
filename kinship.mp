@@ -10,10 +10,10 @@ unittriangle = (dir90 -- dir210 -- dir330 -- cycle) scaled 2/3;
 
 vardef male@#(text col_) =
   pair @#c, @#n, @#s, @#w, @#e, @#sw, @#se, @#nw, @#ne, @#cg;
-  @#cg = (0,-1/6nodesize) shifted @#c; % center of gravity
-  @#n  = (0, 2/3nodesize) shifted @#cg;
-  @#sw = (0, 2/3nodesize) rotated  120 shifted @#cg;
-  @#se = (0, 2/3nodesize) rotated -120 shifted @#cg;
+  @#cg = (0,-1) scaled 1/6nodesize shifted @#c; % center of gravity
+  @#n  = dir 90 scaled 2/3nodesize shifted @#cg;
+  @#sw = dir210 scaled 2/3nodesize shifted @#cg;
+  @#se = dir330 scaled 2/3nodesize shifted @#cg;
   @#nw = @#n; @#ne = @#n;
   @#s  = 1/2[@#se,@#sw];
   @#w  = 1/2[@#n, @#sw];
@@ -26,14 +26,14 @@ enddef;
 
 vardef female@#(text col_) =
   pair @#c, @#n, @#s, @#w, @#e, @#sw, @#se, @#nw, @#ne, @#cg;
-  @#n  = @#c + (0, 1/2nodesize);
-  @#w  = @#c - (1/2nodesize, 0);
-  @#s  = @#c - (0, 1/2nodesize);
-  @#e  = @#c + (1/2nodesize, 0);
-  @#ne = dir45 *.5nodesize + @#c;
-  @#nw = dir135*.5nodesize + @#c;
-  @#se = dir315*.5nodesize + @#c;
-  @#sw = dir225*.5nodesize + @#c;
+  @#e  = dir  0 scaled 1/2nodesize shifted @#c;
+  @#ne = dir 45 scaled 1/2nodesize shifted @#c;
+  @#n  = dir 90 scaled 1/2nodesize shifted @#c;
+  @#nw = dir135 scaled 1/2nodesize shifted @#c;
+  @#w  = dir180 scaled 1/2nodesize shifted @#c;
+  @#sw = dir225 scaled 1/2nodesize shifted @#c;
+  @#s  = dir270 scaled 1/2nodesize shifted @#c;
+  @#se = dir315 scaled 1/2nodesize shifted @#c;
   @#cg = @#c;
   string _fm_@#; _fm_@# :=
     "fill fullcircle scaled "&decimal nodesize &" shifted "&str @#
@@ -43,14 +43,14 @@ enddef;
 
 vardef unidentified@#(text col_) =
   pair @#c, @#n, @#s, @#w, @#e, @#sw, @#se, @#nw, @#ne, @#cg;
-  @#ne = @#c + (.5nodesize, .5nodesize);
-  @#sw = @#c - (.5nodesize, .5nodesize);
-  @#se = @#c + (.5nodesize,-.5nodesize);
-  @#nw = @#c - (.5nodesize,-.5nodesize);
-  @#n  = .5[@#nw, @#ne];
-  @#s  = .5[@#sw, @#se];
-  @#e  = .5[@#ne, @#se];
-  @#w  = .5[@#nw, @#sw];
+  @#ne = ( 1, 1) scaled 1/2nodesize shifted @#c;
+  @#nw = (-1, 1) scaled 1/2nodesize shifted @#c;
+  @#sw = (-1,-1) scaled 1/2nodesize shifted @#c;
+  @#se = ( 1,-1) scaled 1/2nodesize shifted @#c;
+  @#n  = 1/2[@#nw, @#ne];
+  @#s  = 1/2[@#sw, @#se];
+  @#e  = 1/2[@#ne, @#se];
+  @#w  = 1/2[@#nw, @#sw];
   @#cg = @#c;
   string _fm_@#; _fm_@# :=
     "fill unitsquare scaled "&decimal nodesize &" shifted "&str @#
